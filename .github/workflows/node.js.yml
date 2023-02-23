@@ -69,8 +69,8 @@ jobs:
       - name: Build with Reactjs
         run: |
           npm run build \
-            --base "${{ steps.pages.outputs.base_path }}"
-        # working-directory: ${{ env.BUILD_PATH }}
+            -- --base "${{ steps.pages.outputs.base_path }}"
+        working-directory: ${{ env.BUILD_PATH }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
