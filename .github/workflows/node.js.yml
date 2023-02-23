@@ -9,11 +9,14 @@ on:
   pull_request:
     branches: ["main"]
 
+  workflow_dispatch:
+
 permissions:
   contents: write
 
 jobs:
   build:
+    concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -24,6 +27,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Install and Build using Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -32,8 +36,13 @@ jobs:
       - run: npm ci
       - run: npm run build --if-present
       #      - run: npm test
-
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: dist # The folder the action should deploy.
+      # - name: Deploy 🚀
+      #   uses: JamesIves/github-pages-deploy-action@v4
+      #   with:
+      #     folder: dist # The folder the action should deploy.
+      - name: Deploy GitHub Pages site
+        uses: actions/deploy-pages@v1.2.4
+        # with:
+        # GitHub token
+        # token: # default is ${{ github.token }}
+        # Time in milliseconds after which to timeout and cancel the deployment (default: 10 minutes)
