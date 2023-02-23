@@ -68,7 +68,7 @@ jobs:
 
       - name: Build with Reactjs
         run: |
-          ${{ steps.detect-package-manager.outputs.runner }} build \
+          npm run build \
             --site "${{ steps.pages.outputs.origin }}" \
             --base "${{ steps.pages.outputs.base_path }}"
         working-directory: ${{ env.BUILD_PATH }}
