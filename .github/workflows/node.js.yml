@@ -45,14 +45,14 @@ jobs:
         id: checkout
         uses: actions/checkout@v3
 
-      - name: Install and Build using Node.js ${{ matrix.node-version }}
+      - name: Install Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - run: npm ci
         working-directory: ${{ env.BUILD_PATH }}
-      - run: npm run build --if-present
+      # - run: npm run build --if-present
       - run: pwd
       - run: ls
 
@@ -69,7 +69,6 @@ jobs:
       - name: Build with Reactjs
         run: |
           npm run build \
-            --site "${{ steps.pages.outputs.origin }}" \
             --base "${{ steps.pages.outputs.base_path }}"
         # working-directory: ${{ env.BUILD_PATH }}
 
