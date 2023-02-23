@@ -1,24 +1,20 @@
-# Sample workflow for building and deploying an Astro site to GitHub Pages
-#
-# To get started with Astro see: https://docs.astro.build/en/getting-started/
-#
-name: Deploy Reactjs site to Pages
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
   pull_request:
     branches: ["main"]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
-  pages: write
+  contents: write
   id-token: write
+  pages: write
 
 # Allow one concurrent deployment
 concurrency:
@@ -31,7 +27,6 @@ env:
 
 jobs:
   build:
-    name: Build
     concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-latest
 
@@ -42,7 +37,6 @@ jobs:
 
     steps:
       - name: Checkout
-        id: checkout
         uses: actions/checkout@v3
 
       - name: Install and Build using Node.js ${{ matrix.node-version }}
@@ -51,42 +45,19 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - run: npm ci
-        working-directory: ${{ env.BUILD_PATH }}
       - run: npm run build --if-present
       - run: pwd
       - run: ls
 
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v3
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          enablement: true
+          folder: dist # The folder the action should deploy.
 
-      - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-        working-directory: ${{ env.BUILD_PATH }}
 
-      - name: Build with Reactjs
-        run: |
-          ${{ steps.detect-package-manager.outputs.runner }} build \
-            --site "${{ steps.pages.outputs.origin }}" \
-            --base "${{ steps.pages.outputs.base_path }}"
-        working-directory: ${{ env.BUILD_PATH }}
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: ${{ env.BUILD_PATH }}/dist
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
-    runs-on: ubuntu-latest
-
-    name: Deploy
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
+      # - name: Deploy GitHub Pages site
+      #   uses: actions/deploy-pages@v1.2.4
+      # with:
+      # GitHub token
+      # token: # default is ${{ github.token }}
+      # Time in milliseconds after which to timeout and cancel the deployment (default: 10 minutes)
